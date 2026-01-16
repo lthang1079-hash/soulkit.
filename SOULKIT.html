@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOULKIT - Chữa Lành Tâm Hồn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --grad: linear-gradient(135deg, #87CEEB 0%, #FF8C00 100%); }
+        body { margin: 0; font-family: 'Quicksand', sans-serif; background: var(--grad); background-attachment: fixed; min-height: 100vh; padding: 20px; color: #333; }
+        
+        /* HEADER & LOGO */
+        header { text-align: center; padding: 40px 0; }
+        .logo { font-family: 'Dancing Script', cursive; font-size: 6rem; color: #fff; margin: 0; text-shadow: 4px 4px 15px rgba(0,0,0,0.3); letter-spacing: 2px; }
+        .slogan { color: #fff; font-style: italic; font-size: 1.2rem; margin-top: -10px; opacity: 0.9; }
+
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        /* TIÊU ĐỀ PHẦN */
+        .section-title { font-family: 'Dancing Script', cursive; font-size: 2.8rem; color: #FF8C00; margin-bottom: 15px; text-align: center; }
+        .section-desc { text-align: center; color: #666; margin-bottom: 25px; margin-top: -10px; font-weight: 500; }
+
+        .card { background: rgba(255,255,255,0.95); border-radius: 30px; padding: 35px; margin-bottom: 40px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.3); }
+        
+        /* 1. MOOD */
+        .mood-box { display: flex; justify-content: space-around; margin: 20px 0; }
+        .mood-btn { font-size: 3rem; cursor: pointer; transition: 0.4s; padding: 15px; border-radius: 50%; filter: grayscale(0.4); }
+        .mood-btn:hover, .mood-btn.active { filter: grayscale(0); background: #fff3e0; transform: scale(1.2) rotate(5deg); box-shadow: 0 10px 20px rgba(255,140,0,0.2); }
+
+        /* 2. CHAT */
+        .chat-box { height: 350px; overflow-y: auto; border: 1px solid #f0f0f0; padding: 20px; display: flex; flex-direction: column; background: #fff; border-radius: 20px; }
+        .msg { margin-bottom: 15px; padding: 12px 20px; border-radius: 20px; max-width: 80%; line-height: 1.6; position: relative; }
+        .ai { background: #e3f2fd; align-self: flex-start; border-bottom-left-radius: 2px; color: #0056b3; }
+        .user { background: #fff3e0; align-self: flex-end; border-bottom-right-radius: 2px; color: #b35900; }
+
+        .input-group { display: flex; gap: 12px; margin-top: 20px; }
+        input { flex: 1; padding: 15px 25px; border-radius: 30px; border: 2px solid #eee; outline: none; font-family: inherit; font-size: 1rem; transition: 0.3s; }
+        input:focus { border-color: #87CEEB; }
+        #sendBtn { border-radius: 50%; width: 55px; height: 55px; background: #87CEEB; color: white; border: none; cursor: pointer; font-size: 1.5rem; transition: 0.3s; }
+        #sendBtn:hover { background: #00b4d8; transform: rotate(-15deg); }
+
+        /* 3. KIT */
+        .kit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; margin: 25px 0; }
+        .kit-item { background: #fff; padding: 20px; border-radius: 25px; text-align: center; opacity: 0.3; transition: 0.6s; border: 3px solid transparent; }
+        .kit-item.active { opacity: 1; border-color: #FF8C00; transform: translateY(-8px); box-shadow: 0 12px 25px rgba(255,140,0,0.2); }
+        .kit-item i { font-size: 3rem; display: block; margin-bottom: 10px; }
+        .kit-item p { font-weight: 600; margin: 0; color: #444; }
+        
+        .action-btn { background: #FF8C00; color: white; border: none; padding: 18px; border-radius: 35px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1.2rem; box-shadow: 0 5px 15px rgba(255,140,0,0.3); transition: 0.3s; }
+        .action-btn:hover { background: #e67e00; transform: translateY(-2px); }
+        
+        #aiAdvice { margin-top: 25px; padding: 20px; border-radius: 20px; background: #fff; border-left: 8px solid #FF8C00; display: none; line-height: 1.8; font-size: 1.05rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 class="logo">SoulKit</h1>
+    <div class="slogan">Nơi mỗi cảm xúc đều được trân trọng</div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2 class="section-title">Nhận diện cảm xúc</h2>
+        <p class="section-desc">Hôm nay tâm hồn bạn đang kể câu chuyện gì?</p>
+        <div class="mood-box">
+            <span class="mood-btn" onclick="setMood(this, 'Vui vẻ')">😊</span>
+            <span class="mood-btn" onclick="setMood(this, 'Bình thường')">😐</span>
+            <span class="mood-btn" onclick="setMood(this, 'Buồn bã')">😢</span>
+            <span class="mood-btn" onclick="setMood(this, 'Áp lực')">😰</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="section-title">Góc tâm tình</h2>
+        <p class="section-desc">SoulBot luôn lắng nghe mọi điều bạn chưa thể nói ra...</p>
+        <div id="chatBox" class="chat-box">
+            <div class="msg ai">Chào bạn, mình là SoulBot. Nếu bạn thấy buồn hay mệt mỏi, hãy cứ chia sẻ với mình nhé. Mình luôn ở đây...</div>
+        </div>
+        <div class="input-group">
+            <input type="text" id="userInput" placeholder="Nhắn nhủ điều gì đó với SoulBot...">
+            <button onclick="handleChat()" id="sendBtn">➔</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="section-title">Gia đình SoulKit</h2>
+        <p class="section-desc">Món quà nhỏ từ AI dành riêng cho trạng thái của bạn</p>
+        <div class="kit-grid">
+            <div id="item-SO" class="kit-item"><i>📓</i><p>Sổ cảm xúc</p></div>
+            <div id="item-NEN" class="kit-item"><i>🕯️</i><p>Nến thơm</p></div>
+            <div id="item-GAU" class="kit-item"><i>🧸</i><p>Gấu bông</p></div>
+            <div id="item-LAN" class="kit-item"><i>💆</i><p>Lăn mặt</p></div>
+        </div>
+        <button class="action-btn" id="analyzeBtn" onclick="analyzeEverything()">✨ Nhận bộ Kit phù hợp</button>
+        <div id="aiAdvice"></div>
+    </div>
+</div>
+
+<script type="importmap">
+    { "imports": { "@google/generative-ai": "https://esm.run/@google/generative-ai" } }
+</script>
+
+<script type="module">
+    import { GoogleGenerativeAI } from "@google/generative-ai";
+
+    const API_KEY = "AIzaSyDcX-iKCJ1e7LE7GmjCfCiQw0-BUZmM72A";
+    const genAI = new GoogleGenerativeAI(API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    let chatSession = model.startChat({ history: [] });
+    let selectedMood = "Chưa chọn";
+    let chatHistoryText = "";
+
+    window.setMood = (el, mood) => {
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        selectedMood = mood;
+    };
+
+    window.handleChat = async () => {
+        const input = document.getElementById('userInput');
+        const box = document.getElementById('chatBox');
+        const text = input.value.trim();
+        if (!text) return;
+
+        box.innerHTML += `<div class="msg user"><b>Bạn:</b><br>${text}</div>`;
+        chatHistoryText += "Học sinh: " + text + "\n";
+        input.value = "";
+        box.scrollTop = box.scrollHeight;
+
+        const loading = document.createElement("div");
+        loading.className = "msg ai";
+        loading.innerText = "SoulBot đang lắng nghe...";
+        box.appendChild(loading);
+
+        try {
+            const result = await chatSession.sendMessage(text);
+            const response = await result.response;
+            const aiText = response.text();
+            loading.innerHTML = `<b>SoulBot:</b><br>${aiText}`;
+            chatHistoryText += "SoulBot: " + aiText + "\n";
+        } catch (e) {
+            loading.innerText = "Mình nghe đây, cứ tựa vào vai mình nhé...Gói ghém hết nỗi buồn lại đây, mình giữ hộ cho...";
+        }
+        box.scrollTop = box.scrollHeight;
+    };
+
+    window.analyzeEverything = async () => {
+        const btn = document.getElementById('analyzeBtn');
+        const adviceDiv = document.getElementById('aiAdvice');
+        
+        btn.disabled = true;
+        btn.innerText = "⌛ AI đang chuẩn bị món quà...";
+        adviceDiv.style.display = "block";
+        adviceDiv.innerHTML = "<em>Đang thấu cảm câu chuyện của bạn...</em>";
+
+        const prompt = `Bạn là SoulBot. Dựa trên mood '${selectedMood}' và cuộc trò chuyện: '${chatHistoryText}'. 
+        Nếu người dùng nói buồn, hãy đề xuất Gấu bông [GAU] kèm một lời an ủi cực kỳ ấm áp để họ thấy khá hơn. 
+        Sử dụng mã: [SO], [NEN], [GAU], [LAN] trong văn bản.`;
+
+        try {
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            const resText = response.text();
+            
+            adviceDiv.innerHTML = `<strong>Lời nhắn từ trái tim AI:</strong><br>${resText.replace(/\[.*?\]/g, '')}`;
+            
+            updateKitDisplay(resText);
+        } catch (e) {
+            adviceDiv.innerText = "Bạn nên sử dụng bộ kit GẤU BÔNG sẽ giúp bạn cảm thấy ổn hơn";
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "✨ Nhận bộ Kit phù hợp";
+        }
+    };
+
+    function updateKitDisplay(text) {
+        const kits = ["SO", "NEN", "GAU", "LAN"];
+        document.querySelectorAll('.kit-item').forEach(item => item.classList.remove('active'));
+        kits.forEach(k => {
+            if (text.toUpperCase().includes(`[${k}]`)) {
+                document.getElementById(`item-${k}`).classList.add('active');
+            }
+        });
+    }
+</script>
+</body>
+</html>
